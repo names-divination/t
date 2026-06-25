@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>簡易チャット</title>
+<style>
+#chat{
+  height:300px;
+  overflow:auto;
+  border:1px solid #aaa;
+  padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>チャット</h2>
+
+<div id="chat"></div>
+
+<input id="text" placeholder="入力">
+<button onclick="send()">送信</button>
+
+
+<script>
+
+const API = "GASのURL";
+
+
+// 送信
+async function send(){
+
+  const text =
+    document.getElementById("text").value;
+
+  if(!text) return;
+
+
+  await fetch(API,{
+    method:"POST",
+    body:JSON.stringify({
+      type:"send",
+      message:text
+    })
+  });
+
+
+  document.getElementById("text").value="";
+}
+
+
+// 取得
+async function load(){
+
+  const res = await fetch(API);
+  const data = await res.json();
+
+
+  document.getElementById("chat").innerHTML =
+    data.messages
+    .map(x=>"<p>"+x+"</p>")
+    .join("");
+
+}
+
+
+// 1秒ごと更新
+setInterval(load,1000);
+
+load();
+
+</script>
+
+</body>
+</html>
